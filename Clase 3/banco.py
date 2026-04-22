@@ -1,86 +1,46 @@
 import socket
 
-# crea el socket
 servidor_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-# asignar id y puerto
 servidor_socket.bind(("localhost", 5000))
 print("Esperando conexiones al banco...")
 
-def preguntar_al_cliente(data, origen_addr, ser_socket):
-    for n in range(1, 6):
-        match n:
-            case 1:
-                Pregunta = "Eres mayor de edad (si o no)? "
-                ser_socket.sendto(Pregunta.encode(), origen_addr)
-                data, origen_addr = ser_socket.recvfrom(1024)
-                respuesta_cliente = data.decode().strip().lower()
-                
-                if respuesta_cliente == "si":
-                    respuesta_servidor = "Perfecto siguiente"
-                else:
-                    respuesta_servidor = "Error siguiente"
-                ser_socket.sendto(respuesta_servidor.encode(), origen_addr)
-                
-            case 2:
-                Pregunta = "Tienes fuentes de ingresos (si o no)? "
-                ser_socket.sendto(Pregunta.encode(), origen_addr)
-                data, origen_addr = ser_socket.recvfrom(1024)
-                respuesta_cliente = data.decode().strip().lower()
-                
-                if respuesta_cliente == "si":
-                    respuesta_servidor = "Perfecto siguiente"
-                else:
-                    respuesta_servidor = "Error siguiente"
-                ser_socket.sendto(respuesta_servidor.encode(), origen_addr)
-                
-            case 3:
-                Pregunta = "Tienes titulo academico (si o no)? "
-                ser_socket.sendto(Pregunta.encode(), origen_addr)
-                data, origen_addr = ser_socket.recvfrom(1024)
-                respuesta_cliente = data.decode().strip().lower()
-                
-                if respuesta_cliente == "si":
-                    respuesta_servidor = "Perfecto siguiente"
-                else:
-                    respuesta_servidor = "Error siguiente"
-                ser_socket.sendto(respuesta_servidor.encode(), origen_addr)
-                
-            case 4:
-                Pregunta = "Posees una tarjeta de debito (si o no)? "
-                ser_socket.sendto(Pregunta.encode(), origen_addr)
-                data, origen_addr = ser_socket.recvfrom(1024)
-                respuesta_cliente = data.decode().strip().lower()
-                
-                if respuesta_cliente == "si":
-                    respuesta_servidor = "Perfecto siguiente"
-                else:
-                    respuesta_servidor = "Error siguiente"
-                ser_socket.sendto(respuesta_servidor.encode(), origen_addr)
-                
-            case 5:
-                Pregunta = "Posees una tarjeta de credito (si o no)? "
-                ser_socket.sendto(Pregunta.encode(), origen_addr)
-                data, origen_addr = ser_socket.recvfrom(1024)
-                respuesta_cliente = data.decode().strip().lower()
-                
-                if respuesta_cliente == "si":
-                    respuesta_servidor = "Perfecto fin de las preguntas (ingrese cierre para cerrar su sesion)"
-                else:
-                    respuesta_servidor = "Error fin de las preguntas (ingrese cierre para cerrar su sesion)"
-                ser_socket.sendto(respuesta_servidor.encode(), origen_addr)
+preguntas = [
+    "Eres mayor de edad (si o no)?",
+    "Tienes fuentes de ingresos (si o no)?",
+    "Tienes titulo academico (si o no)?",
+    "Posees una tarjeta de debito (si o no)?",
+    "Posees una tarjeta de credito (si o no)?"
+]
 
-def iniciar_con_cliente(data, origen_addr, ser_socket):
-    mensaje = data.decode().strip().lower()
-    if mensaje == "inicio":
-        print(f"Usuario ha declarado {mensaje}")
-        respuesta = "Saludos cliente \nPor favor responda a las siguientes preguntas"
-        ser_socket.sendto(respuesta.encode(), origen_addr)
-        preguntar_al_cliente(data, origen_addr, ser_socket)
-    else:
-        respuesta = "Recuerde poner 'inicio' para seguir o 'cierre' para abandonar"
-        ser_socket.sendto(respuesta.encode(), origen_addr)
+usuarios = {} 
 
 while True:
-    # recibir mensaje de cliente
-    data, oaddr = servidor_socket.recvfrom(1024)
-    iniciar_con_cliente(data, oaddr, servidor_socket)
+    data, addr = servidor_socket.recvfrom(1024)
+    mensaje = data.decode().strip().lower() # Strip y lower para ahorrarnos el formato de la respuestas
+
+    if mensaje == "inicio":
+        usuarios[addr] = 0
+        print(f"Nuevo cliente conectado desde {addr}")
+        respuesta = f"Saludos cliente!\n{preguntas[0]}"
+        servidor_socket.sendto(respuesta.encode(), addr)
+
+    elif mensaje == "cierre":
+        usuarios.pop(addr, None) # El none esta para evitarme posibles errores. Lo puse solo de buena practica, no lo veria necesario para este caso
+        servidor_socket.sendto("Sesion cerrada. Adios!".encode(), addr)
+
+    elif addr in usuarios:
+        usuarios[addr] += 1 
+        indice = usuarios[addr] 
+        
+        if indice < len(preguntas) and mensaje == "si":
+            respuesta = f"Perfecto, siguiente.\n{preguntas[indice]}"
+            servidor_socket.sendto(respuesta.encode(), addr)
+        elif indice < len(preguntas):
+            respuesta = f"No cumples uno de los requisitos, siguiente.\n{preguntas[indice]}"
+            servidor_socket.sendto(respuesta.encode(), addr)
+        else:
+            respuesta = "Perfecto, fin de las preguntas (ingrese 'cierre' para salir)"
+            servidor_socket.sendto(respuesta.encode(), addr)
+            
+    else:
+        servidor_socket.sendto("Por favor escriba 'inicio' para comenzar.".encode(), addr)
