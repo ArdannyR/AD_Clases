@@ -5,8 +5,6 @@ import time
 estado = {} # dir de cliente y estado
 usuarios = {} # cedula y datos{}
 
-global cedula_activa
-
 menu_inicial = "-- Menu -- \n1. Registrar usuario \n2. Consultar usuario \n3. Salir"
 menu_recarga = "-- Menu -- \n1. Recargar tarjeta \n2. Regresar "
 peticion_de_datos = "Envie sus datos separados por coma \n(cédula, correo, teléfono, nombre y preferencial (true o false). El saldo se ira en 0)"
