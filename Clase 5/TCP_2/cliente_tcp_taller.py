@@ -8,13 +8,14 @@ while True:
     mensaje_envi = input(str("\nIngresa un mensaje: "))
     cliente_socket.send(mensaje_envi.encode()) 
 
-    if mensaje_envi == "3":
-        time.sleep(1)
-        break
-
     mensaje_reciv = cliente_socket.recv(1024) 
-    print(f"El servidor dice: \n{mensaje_reciv.decode()}")
+    print(f"\nEl servidor dice: \n{mensaje_reciv.decode()}")
 
-
+    if mensaje_reciv.decode() == f"Cerrando tu conexion":
+        time.sleep(2)
+        break
+        
 cliente_socket.close()
+print("\nConexión cerrada exitosamente.")
+
 
