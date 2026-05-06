@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+service Conversor {
+    rpc C_a_F (parametros) returns (resultado);
+    rpc F_a_C (parametros) returns (resultado);
+}
+
+message parametros{
+    float temp_1 = 1;
+}
+
+message resultado{
+    float conversion = 1; 
+}
