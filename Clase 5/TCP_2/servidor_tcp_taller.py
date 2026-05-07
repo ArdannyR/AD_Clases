@@ -11,6 +11,7 @@ peticion_de_datos = "Envie sus datos separados por coma \n(c√©dula, correo, tel√
  
 def manejar_cliente(conexion, direccion):
     print(f"Cliente conectado: {direccion[0]}")
+    # conexion.settimeout(60) # Con esta linea podre hacer desconexion por inactividad, mas estoy aun indagando como funciona para implementarlo
     while True:    
         mensaje_reciv = conexion.recv(1024)
         print(f"El cliente dice: {mensaje_reciv.decode()}")
