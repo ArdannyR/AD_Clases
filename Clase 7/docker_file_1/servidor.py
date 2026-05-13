@@ -7,4 +7,4 @@ def hola():
     return "Hola desde el Servidor"
 
 if __name__ == "__main__":
-    servidor.run(debug=True)
+    servidor.run(host="0.0.0.0", debug=True)
