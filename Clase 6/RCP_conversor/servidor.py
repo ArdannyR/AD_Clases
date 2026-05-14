@@ -14,8 +14,8 @@ def F_a_C(temp):
 servidor = SimpleXMLRPCServer(("localhost", 5000)) # 172.31.115.134 o localhost
 
 # Aqui registramos la funcion que debe hacer referencia el cliente para llamar a la funcion en este servidor
-servidor.register_function(C_a_F, "F") # Cuando el cliente llame a "sumar" aqui se activara sumar
-servidor.register_function(F_a_C, "C") # No necesariamente debe tener el mismo nombre 
+servidor.register_function(C_a_F, "C") # Cuando el cliente llame a "sumar" aqui se activara sumar
+servidor.register_function(F_a_C, "F") # No necesariamente debe tener el mismo nombre 
 
 # Activar por siempre el servidor (para escuchar peticiones) (Ya no necesitas el while True para mantener activo)
 print("Servidor esuchando...")

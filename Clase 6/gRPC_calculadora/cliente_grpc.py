@@ -26,9 +26,9 @@ if operacion == "+":
     print(f"La respuesta de sumar es: {sumar(num_a, num_b).r}")
 elif operacion == "-":
     print(f"La respuesta de restar es: {restar(num_a, num_b).r}")
-elif operacion == "-":
+elif operacion == "*":
     print(f"La respuesta de multiplicar es: {multiplicar(num_a, num_b).r}")
-elif operacion == "-":
+elif operacion == "/":
     print(f"La respuesta de dividir es: {dividir(num_a, num_b).r}")
 else:
-    print(f"Erro en tus datos")
+    print(f"Error en tus datos")
