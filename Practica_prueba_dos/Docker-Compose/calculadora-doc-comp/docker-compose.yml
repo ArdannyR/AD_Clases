@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  calculadora:
+    build:
+      context: ./calculadora
+      dockerfile: Dockerfile
+    container_name: calculadora_principal
+    ports:
+      - "5000:5000" 
+    depends_on:
+      - suma
+    networks:
+      - red_calculadora
+
+  suma:
+    build:
+      context: ./suma
+      dockerfile: Dockerfile
+    container_name: servicio_suma
+    networks:
+      - red_calculadora
+
+networks:
+  red_calculadora:
+    driver: bridge
