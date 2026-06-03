@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  mysql_principal:
+    container_name: Maestro
+    image: mysql:8.0
+    ports: 
+     - 3306:3306
+    command: --server-id=1 --log-bin=mysql-bin --binlog-do-db=replica 
+    environment:
+      MYSQL_ROOT_PASSWORD: root  
+      MYSQL_DATABASE: replica
+    volumes:
+      - master_data:/var/lib/mysql
+  
+  mysql_secundario:
+    container_name: Esclavo
+    image: mysql:8.0
+    ports: 
+     - 3307:3306
+    command: --server-id=2 --log-bin=mysql-bin --binlog-do-db=replica 
+    environment:
+      MYSQL_ROOT_PASSWORD: root  
+      MYSQL_DATABASE: replica
+    volumes:
+      - slave_data:/var/lib/mysql
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin:latest
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOSTS: "mysql_principal, mysql_secundario"
+      PMA_ARBITRARY: 1 
+
+  python:
+    build:
+      context: ./formulario
+      dockerfile: Dockerfile
+    container_name: ServidorWeb
+    ports:
+      - 5050:5000
+
+volumes:
+  master_data:
+  slave_data:

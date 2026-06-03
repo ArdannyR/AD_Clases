@@ -1,0 +1,37 @@
+import xmlrpc.client
+
+cliente = xmlrpc.client.ServerProxy("http://servidor:8000/")
+
+menu = "\nMENU \n1. Ver lista de peliculas \n2. Agregar una pelicula \n3. Actulizar una pelicula \n4. Eliminar una pelicula \n5. Salir"
+
+while True:
+    cliente.serve_forever()
+    print(menu)
+    opcion = int(input("\nSeleccione una opcion: ")) 
+    match opcion:
+        case 1:
+            print(cliente.obtener_peliculas())
+
+        case 2:
+            titulo = str(input("Ingrese titulo de la pelicula: "))
+            genero = str(input("Ingrese genero de la pelicula: "))
+            print(cliente.agregar_pelicula(titulo, genero))
+
+        case 3: 
+            print(cliente.obtener_peliculas())
+            objetivo = int(input("Ingrese el numero de la pelicula a actualizar: "))
+            titulo = str(input("Ingrese el nuevo titulo de la pelicula: "))
+            genero = str(input("Ingrese el nuevo genero de la pelicula: "))
+            print(cliente.actualizar_pelicula(objetivo, titulo, genero))
+           
+        case 4:
+            print(cliente.obtener_peliculas())
+            objetivo = int(input("Ingrese el numero de la pelicula a eliminar: "))
+            print(cliente.eliminar_pelicula(objetivo))
+
+        case 5:
+            print("\nSaliendo...")
+            break
+
+        case _:
+            print("\nOpcion no valida")
