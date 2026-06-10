@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gestión de Películas</title>
+</head>
+<body>
+    <h1>Registro de Películas</h1>
+
+    <form action="/agregar" method="POST">
+        <input type="text" name="titulo" placeholder="Título" required>
+        <input type="text" name="genero" placeholder="Género" required>
+        <input type="number" name="anio" placeholder="Año" required>
+        <input type="text" name="director" placeholder="Director" required>
+        <button type="submit">Guardar</button>
+    </form>
+
+    <h2>Películas registradas</h2>
+
+    <ul>
+        {% for pelicula in peliculas %}
+            <li>
+                {{ pelicula.titulo }} - {{ pelicula.genero }} - {{ pelicula.anio }} - {{ pelicula.director }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
