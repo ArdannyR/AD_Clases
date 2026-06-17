@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gestión de Tareas</title>
+</head>
+<body>
+    <h1>Mis Deberes y Tareas</h1>
+    <p>Atendido por el nodo: <strong>{{ nodo }}</strong></p>
+
+    <h2>Nueva Tarea</h2>
+    <form action="/agregar" method="POST">
+        <input type="text" name="titulo" placeholder="Título" required>
+        <input type="text" name="descripcion" placeholder="Descripción">
+        <select name="estado">
+            <option value="Pendiente">Pendiente</option>
+            <option value="En Progreso">En Progreso</option>
+            <option value="Completada">Completada</option>
+        </select>
+        <input type="date" name="fecha_limite" required>
+        <button type="submit">Guardar</button>
+    </form>
+
+    <hr>
+
+    <h2>Lista de Tareas</h2>
+    <form action="/" method="GET">
+        <label>Filtro:</label>
+        <select name="estado">
+            <option value="Todos">Todos</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="En Progreso">En Progreso</option>
+            <option value="Completada">Completada</option>
+        </select>
+        <button type="submit">Buscar</button>
+    </form>
+
+    <br>
+
+    <ul>
+        {% for tarea in tareas %}
+        <li>
+            {{ tarea.id }} - {{ tarea.titulo }} - {{ tarea.descripcion }} - {{ tarea.fecha_limite }} - {{ tarea.estado }} 
+            
+            &nbsp; | &nbsp;
+
+            <form action="/editar/{{ tarea.id }}" method="POST" style="display:inline;">
+                <select name="nuevo_estado">
+                    <option value="Pendiente" {% if tarea.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                    <option value="En Progreso" {% if tarea.estado == 'En Progreso' %}selected{% endif %}>En Progreso</option>
+                    <option value="Completada" {% if tarea.estado == 'Completada' %}selected{% endif %}>Completada</option>
+                </select>
+                <button type="submit" style="background:none; border:none; text-decoration:underline; cursor:pointer;">
+                    Actualizar
+                </button>
+            </form>
+
+            &nbsp; | &nbsp;
+
+            <form action="/eliminar/{{ tarea.id }}" method="POST" style="display:inline;">
+                <button type="submit" style="background:none; border:none; text-decoration:underline; cursor:pointer;">
+                    Eliminar
+                </button>
+            </form>
+        </li>
+        {% else %}
+        <li>No hay tareas registradas.</li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>

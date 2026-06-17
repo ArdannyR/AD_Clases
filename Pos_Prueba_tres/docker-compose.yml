@@ -1,0 +1,84 @@
+version: '3'
+
+services:
+
+  # --- BASE DE DATOS PRINCIPAL ---
+  mysql_principal:
+    container_name: Maestro
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    command: --server-id=1 --log-bin=mysql-bin --binlog-do-db=replica --binlog-ignore-db=mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: replica
+    volumes:
+      - master_data:/var/lib/mysql
+
+  # --- BASE DE DATOS SECUNDARIA ---
+  mysql_secundario:
+    container_name: Esclavo
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    command: --server-id=2 --log-bin=mysql-bin --binlog-do-db=replica --binlog-ignore-db=mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: replica
+    volumes:
+      - slave_data:/var/lib/mysql
+
+  # --- PHPMYADMIN ---
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin:latest
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOSTS: "mysql_principal,mysql_secundario"
+      PMA_ARBITRARY: 1
+    depends_on:
+      - mysql_principal
+      - mysql_secundario
+
+  # --- NODO 1 → BASE DE DATOS PRINCIPAL ---
+  nodo1:
+    build:
+      context: ./aplicacion
+      dockerfile: Dockerfile
+    container_name: Nodo1
+    environment:
+      - DB_HOST=mysql_principal
+    ports:
+      - "5001:5000"
+    depends_on:
+      - mysql_principal
+
+  # --- NODO 2 → BASE DE DATOS SECUNDARIA ---
+  nodo2:
+    build:
+      context: ./aplicacion
+      dockerfile: Dockerfile
+    container_name: Nodo2
+    environment:
+      - DB_HOST=mysql_secundario
+    ports:
+      - "5002:5000"
+    depends_on:
+      - mysql_secundario
+
+  # --- BALANCEADOR DE CARGA (NGINX) ---
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: Balanceador
+    ports:
+      - "8080:80"
+    depends_on:
+      - nodo1
+      - nodo2
+
+volumes:
+  master_data:
+  slave_data:
