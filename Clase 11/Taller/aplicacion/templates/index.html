@@ -5,6 +5,10 @@
 </head>
 <body>
     <h1>Registro de Películas</h1>
+    
+    <div style="background-color: #f0f0f0; padding: 10px; margin-bottom: 20px; border-radius: 5px;">
+        <p>Atendido por el contenedor Flask conectado a: <strong>{{ nodo }}</strong></p>
+    </div>
 
     <form action="/agregar" method="POST">
         <input type="text" name="titulo" placeholder="Título" required>
