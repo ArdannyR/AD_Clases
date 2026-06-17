@@ -2,7 +2,6 @@ version: '3'
 
 services:
 
-  # --- BASE DE DATOS PRINCIPAL ---
   mysql_principal:
     container_name: Maestro
     image: mysql:8.0
@@ -15,7 +14,6 @@ services:
     volumes:
       - master_data:/var/lib/mysql
 
-  # --- BASE DE DATOS SECUNDARIA ---
   mysql_secundario:
     container_name: Esclavo
     image: mysql:8.0
@@ -28,7 +26,6 @@ services:
     volumes:
       - slave_data:/var/lib/mysql
 
-  # --- PHPMYADMIN ---
   phpmyadmin:
     container_name: phpmyadmin
     image: phpmyadmin:latest
@@ -38,7 +35,6 @@ services:
       PMA_HOSTS: "mysql_principal,mysql_secundario"
       PMA_ARBITRARY: 1
 
-  # --- NODO 1 → BASE DE DATOS PRINCIPAL ---
   nodo1:
     build:
       context: ./formulario
@@ -49,7 +45,6 @@ services:
     ports:
       - "5001:5000"
 
-  # --- NODO 2 → BASE DE DATOS SECUNDARIA ---
   nodo2:
     build:
       context: ./formulario
@@ -60,7 +55,6 @@ services:
     ports:
       - "5002:5000"
 
-  # --- BALANCEADOR DE CARGA (NGINX) ---
   nginx:
     build:
       context: ./nginx

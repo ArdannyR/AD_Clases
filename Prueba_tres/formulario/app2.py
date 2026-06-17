@@ -4,12 +4,12 @@ import time
 import os
 
 app = Flask(__name__)
+db_host = os.environ.get("DB_HOST", "mysql_principal")
 
 def obtener_conexion():
     retries = 5
     while retries > 0:
         try:
-            db_host = os.environ.get("DB_HOST", "mysql_principal")
             conexion = mysql.connector.connect(
                 host=db_host,
                 user="root",
@@ -27,7 +27,7 @@ def obtener_conexion():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", nodo=db_host)
    
 @app.route("/agregar", methods=["POST"])
 def agregar():
