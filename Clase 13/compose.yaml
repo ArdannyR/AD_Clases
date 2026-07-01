@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    container_name: taller-semana13-selecciones
+    ports:
+      - "8080:5000"
+    environment:
+      ENDPOINT_URL: "http://172.31.118.15:3000/selecciones"
+      DB_PATH: "/app/data/selecciones.db"
+      DEMO_MODE: "true" 
+      SECRET_KEY: "taller-semana13"
+    volumes:
+      - datos_selecciones:/app/data
+    restart: unless-stopped
+
+volumes:
+  datos_selecciones:

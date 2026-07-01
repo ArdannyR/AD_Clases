@@ -1,0 +1,5 @@
+[
+  {"id": 1, "nombre": "Ecuador", "continente": "CONMEBOL", "grupo": "A"},
+  {"id": 2, "nombre": "Argentina", "continente": "CONMEBOL", "grupo": "B"},
+  {"id": 3, "nombre": "Japón", "continente": "AFC", "grupo": "C"}
+]

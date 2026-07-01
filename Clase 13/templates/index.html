@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Selecciones mundialistas</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Aplicaciones Distribuidas - Semana 13</p>
+      <h1>Gestor de selecciones mundialistas</h1>
+      <p>Consume un endpoint remoto, guarda una copia local y permite agregar o actualizar registros.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="message {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <section class="card endpoint-card">
+      <div>
+        <h2>1. Sincronizar datos</h2>
+        <p><strong>Fuente:</strong> <code>{{ endpoint_url }}</code></p>
+        {% if demo_mode %}
+          <p class="warning">Modo demostración activo: no se está consultando el endpoint real.</p>
+        {% endif %}
+      </div>
+      <form method="post" action="{{ url_for('sincronizar_ruta') }}">
+        <button type="submit">Sincronizar ahora</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>2. Agregar una selección</h2>
+      <form class="grid-form" method="post" action="{{ url_for('nueva') }}">
+        <label>Nombre
+          <input name="nombre" required placeholder="Ej.: Ecuador">
+        </label>
+        <label>Continente / confederación
+          <input name="continente" placeholder="Ej.: CONMEBOL">
+        </label>
+        <label>Grupo
+          <input name="grupo" placeholder="Ej.: A">
+        </label>
+        <button type="submit">Guardar selección</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="table-title">
+        <h2>3. Selecciones guardadas</h2>
+        <span class="badge">{{ selecciones|length }} registro(s)</span>
+      </div>
+      {% if selecciones %}
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>Selección</th><th>Continente</th><th>Grupo</th><th>Origen</th><th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for seleccion in selecciones %}
+            <tr>
+              <td>{{ seleccion['id'] }}</td>
+              <td><strong>{{ seleccion['nombre'] }}</strong></td>
+              <td>{{ seleccion['continente'] or '-' }}</td>
+              <td>{{ seleccion['grupo'] or '-' }}</td>
+              <td>{{ seleccion['origen'] }}</td>
+              <td><a class="link-button" href="{{ url_for('editar', seleccion_id=seleccion['id']) }}">Editar</a></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <p class="empty">Todavía no existen registros. Sincronice el endpoint o agregue una selección.</p>
+      {% endif %}
+    </section>
+
+    <section class="card note">
+      <h2>Endpoints de esta aplicación</h2>
+      <p><code>/health</code> comprueba el servicio y <code>/api/selecciones</code> devuelve la base local en JSON.</p>
+    </section>
+  </main>
+</body>
+</html>
