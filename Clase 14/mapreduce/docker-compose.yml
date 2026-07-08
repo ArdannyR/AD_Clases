@@ -1,0 +1,46 @@
+services:
+  preparador:
+    build: .
+    volumes:
+      - .:/app
+    command: bash split_entrada.sh
+
+  mapper1:
+    build: .
+    volumes:
+      - .:/app
+    depends_on:
+      preparador:
+        condition: service_completed_successfully
+    command: python mapper.py splits/part_00.txt
+
+  mapper2:
+    build: .
+    volumes:
+      - .:/app
+    depends_on:
+      preparador:
+        condition: service_completed_successfully
+    command: python mapper.py splits/part_01.txt
+
+  mapper3:
+    build: .
+    volumes:
+      - .:/app
+    depends_on:
+      preparador:
+        condition: service_completed_successfully
+    command: python mapper.py splits/part_02.txt
+
+  reducer:
+    build: .
+    volumes:
+      - .:/app
+    depends_on:
+      mapper1:
+        condition: service_completed_successfully
+      mapper2:
+        condition: service_completed_successfully
+      mapper3:
+        condition: service_completed_successfully
+    command: python reducer.py
