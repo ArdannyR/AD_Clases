@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  web_app:
+    build: .
+    container_name: flask_asistencia_app
+    ports:
+      - "5000:5000"
+    volumes:
+      - db_data:/app/data
+    environment:
+      - FLASK_ENV=production
+      - DB_PATH=/app/data/asistencia.db
+    restart: always
+
+  locust:
+    image: locustio/locust
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./locustfile.py:/mnt/locust/locustfile.py
+    command: -f /mnt/locust/locustfile.py --host http://web_app:5000
+    depends_on:
+      - web_app
+
+volumes:
+  db_data:
